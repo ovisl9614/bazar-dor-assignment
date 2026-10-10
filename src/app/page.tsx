@@ -79,7 +79,7 @@ down: "bg-red-100 text-red-700",
 
 
       {/* Product emoji / illustration */}
-      <div className="flex aspect-[5/3] items-center justify-center rounded-xl bg-green-50 text-5xl transition group-hover:bg-green-100 sm:text-6xl">
+      <div className="flex aspect-5/3 items-center justify-center rounded-xl bg-green-50 text-5xl transition group-hover:bg-green-100 sm:text-6xl">
    {product.image || product.categoryIcon || "🛒"}
       </div>
 
@@ -190,7 +190,9 @@ export default async function Home() {
 
   return (
     <main className="min-h-screen bg-gray-50">
+
       <Marquee />
+
       <Banner />
 
       <div className="mx-auto max-w-7xl space-y-10 px-4 py-8 sm:px-6 sm:py-10 lg:px-8">

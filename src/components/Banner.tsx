@@ -3,7 +3,7 @@ const Banner = () => {
   return (
     <section className="mx-auto w-full max-w-6xl px-4 pt-5 sm:px-6 lg:px-8">
 
-      <div className="flex flex-col items-center justify-between gap-6 overflow-hidden rounded-xl border border-green-100 bg-gradient-to-r from-green-50 via-white to-green-50 px-5 py-6 sm:flex-row sm:px-8 sm:py-8 lg:px-10">
+      <div className="flex flex-col items-center justify-between gap-6 overflow-hidden rounded-xl border border-green-100 bg-linear-to-r from-green-50 via-white to-green-50 px-5 py-6 sm:flex-row sm:px-8 sm:py-8 lg:px-10">
 
         {/* Left Side Heading and Button */}
         <div className="w-full text-center sm:w-3/5 sm:text-left">

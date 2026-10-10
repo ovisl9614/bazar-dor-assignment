@@ -1,132 +1,77 @@
 
-import Link from 'next/link';
+import Link from "next/link";
 
-
-
-interface NavCategory {
-  id: string;
-  slug: string;
+type NavCategory = {
+  id: string | number;
+  slug?: string;
   nameBn: string;
-  icon: string;
-}
-
-
-
+  icon?: string;
+};
 
 const API_URL =
-  'https://api.abcz.workers.dev/api/bazardor/categories';
-
-
+  "https://api.api-store.workers.dev/api/bazardor/categories";
 
 async function getCategories(): Promise<NavCategory[]> {
   try {
     const response = await fetch(API_URL, {
-     
-      
       next: { revalidate: 300 },
     });
 
-    // API error check
     if (!response.ok) {
-      console.error(
-        'Categories API Error:',
-        response.status,
-        response.statusText
-      );
-
+      console.error("Categories API error:", response.status);
       return [];
     }
 
-    
-    const data: unknown = await response.json();
+    const json: unknown = await response.json();
 
-    if (!Array.isArray(data)) {
-      console.error('Invalid categories API response');
-      return [];
+    // API array bhi return kar sakti hai ya { data: [...] }
+    let items: unknown[] = [];
+
+    if (Array.isArray(json)) {
+      items = json;
+    } else if (
+      typeof json === "object" &&
+      json !== null &&
+      "data" in json &&
+      Array.isArray(json.data)
+    ) {
+      items = json.data;
     }
 
-    return data.filter(
+    return items.filter(
       (item): item is NavCategory =>
-        typeof item?.id === 'string' &&
-        typeof item?.slug === 'string' &&
-        typeof item?.nameBn === 'string' &&
-        typeof item?.icon === 'string'
+        typeof item === "object" &&
+        item !== null &&
+        "id" in item &&
+        (typeof item.id === "string" ||
+          typeof item.id === "number") &&
+        "nameBn" in item &&
+        typeof item.nameBn === "string"
     );
   } catch (error) {
-    // Network ya JSON parsing error
-    console.error('Failed to load categories:', error);
-
+    console.error("Failed to load categories:", error);
     return [];
   }
 }
 
-
-
-const NavLinks = async () => {
+export default async function NavLinks() {
   const categories = await getCategories();
-
-  if (categories.length === 0) {
-    return null;
-  }
 
   return (
     <nav
       aria-label="Product categories"
-      className="
-        w-full
-        px-3 py-3
-        sm:px-5 sm:py-4
-        lg:px-8
-      "
+      className="w-full px-3 py-3 sm:px-5 sm:py-4 lg:px-8"
     >
-      {/* Responsive category container */}
-      <ul
-        className="
-          mx-auto
-          flex max-w-7xl
-          flex-wrap
-          items-center
-          justify-center
-          gap-2
-          sm:gap-3
-          lg:gap-4
-        "
-      >
+      <ul className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-2 sm:gap-3 lg:gap-4">
         {categories.map((category) => (
           <li key={category.id}>
             <Link
-              href={`/category/${category.slug}`}
-              className="
-                inline-flex
-                min-h-10
-                items-center
-                justify-center
-                gap-1.5
-                rounded-full
-                border border-gray-200
-                bg-white
-                px-3 py-2
-                text-sm font-medium
-                text-gray-700
-                shadow-sm
-                transition-colors duration-200
-
-                hover:border-green-500
-                hover:bg-green-50
-                hover:text-green-700
-
-                focus-visible:outline-none
-                focus-visible:ring-2
-                focus-visible:ring-green-500
-                focus-visible:ring-offset-2
-
-                sm:px-4 sm:text-base
-              "
+              href={`/category/${category.id}`}
+              className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-full border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm transition-colors hover:border-green-500 hover:bg-green-50 hover:text-green-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 sm:px-4 sm:text-base"
             >
               <span aria-hidden="true">
-                {category.icon}
+                {category.icon ?? "🛒"}
               </span>
-
               <span>{category.nameBn}</span>
             </Link>
           </li>
@@ -134,6 +79,4 @@ const NavLinks = async () => {
       </ul>
     </nav>
   );
-};
-
-export default NavLinks;
+}
